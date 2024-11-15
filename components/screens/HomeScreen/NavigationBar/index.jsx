@@ -3,11 +3,12 @@ import {faGlobe, faRoute, faUser} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-const NavigationBar = ({activeNavItem, setActiveNavItem}) => {
-  const isDirectionTab = activeNavItem === 'direction';
-  const isMapTab = activeNavItem === 'map';
-  const isProfileTab = activeNavItem === 'profile';
-
+const NavigationBar = ({
+  isDirectionTabActive,
+  isMapTabActive,
+  isProfileTabActive,
+  setActiveNavItem,
+}) => {
   const handleNavigation = item => {
     setActiveNavItem(item);
   };
@@ -15,36 +16,44 @@ const NavigationBar = ({activeNavItem, setActiveNavItem}) => {
   return (
     <View style={styles.navigationBar}>
       <TouchableOpacity
-        style={[styles.navigationButton, isDirectionTab && styles.activeButton]}
+        style={[
+          styles.navigationButton,
+          isDirectionTabActive && styles.activeButton,
+        ]}
         onPress={() => handleNavigation('direction')}>
         <FontAwesomeIcon
           icon={faRoute}
           size={20}
-          color={isDirectionTab ? '#006eff' : '#8f8f8f'}
+          color={isDirectionTabActive ? '#006eff' : '#8f8f8f'}
         />
-        <Text style={[styles.text, isDirectionTab && styles.activeText]}>
+        <Text style={[styles.text, isDirectionTabActive && styles.activeText]}>
           Directions
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[styles.navigationButton, isMapTab && styles.activeButton]}
+        style={[styles.navigationButton, isMapTabActive && styles.activeButton]}
         onPress={() => handleNavigation('map')}>
         <FontAwesomeIcon
           icon={faGlobe}
           size={20}
-          color={isMapTab ? '#006eff' : '#8f8f8f'}
+          color={isMapTabActive ? '#006eff' : '#8f8f8f'}
         />
-        <Text style={[styles.text, isMapTab && styles.activeText]}>Map</Text>
+        <Text style={[styles.text, isMapTabActive && styles.activeText]}>
+          Map
+        </Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[styles.navigationButton, isProfileTab && styles.activeButton]}
+        style={[
+          styles.navigationButton,
+          isProfileTabActive && styles.activeButton,
+        ]}
         onPress={() => handleNavigation('profile')}>
         <FontAwesomeIcon
           icon={faUser}
           size={20}
-          color={isProfileTab ? '#006eff' : '#8f8f8f'}
+          color={isProfileTabActive ? '#006eff' : '#8f8f8f'}
         />
-        <Text style={[styles.text, isProfileTab && styles.activeText]}>
+        <Text style={[styles.text, isProfileTabActive && styles.activeText]}>
           Profile
         </Text>
       </TouchableOpacity>
@@ -70,7 +79,7 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.8,
     shadowRadius: 4,
-    backgroundColor: 'rgba(0, 0, 0, 0.055)',
+    backgroundColor: 'rgba(253, 253, 253, 0.7)',
     overflow: 'hidden',
   },
   navigationButton: {

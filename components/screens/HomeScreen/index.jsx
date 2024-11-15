@@ -1,57 +1,32 @@
 import React, {useState} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import NavigationBar from './NavigationBar';
 import TitleBar from './TitleBar';
-import Dropdown from '../../common-utils/Dropdown';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faRightLeft} from '@fortawesome/free-solid-svg-icons';
+import DirectionTab from './Tabs/DirectionTab';
+import MapTab from './Tabs/MapTab';
+import ProfileTab from './Tabs/ProfileTab';
 
 const HomeScreen = () => {
   const [activeNavItem, setActiveNavItem] = useState('direction');
-  const options = [
-    'Apple',
-    'Banana',
-    'Cherry',
-    'Date',
-    'Grape',
-    'Mango',
-    'Orange',
-  ];
+
+  const isMapTabActive = activeNavItem === 'map';
+  const isDirectionTabActive = activeNavItem === 'direction';
+  const isProfileTabActive = activeNavItem === 'profile';
 
   return (
     <ScrollView>
       <View style={styles.homeScreenContainer}>
+        <TitleBar />
         <NavigationBar
-          activeNavItem={activeNavItem}
+          isMapTabActive={isMapTabActive}
+          isDirectionTabActive={isDirectionTabActive}
+          isProfileTabActive={isProfileTabActive}
           setActiveNavItem={setActiveNavItem}
         />
 
-        <TitleBar />
-
-        <View style={styles.heroSection}>
-          <View>
-            <Text style={styles.titleQuestion}>Where do you</Text>
-            <Text style={styles.titleQuestion}>want to go?</Text>
-          </View>
-          <View style={styles.searchField}>
-            <Dropdown
-              options={options}
-              onOptionSelected={() => {}}
-              placeholder={'Origin'}
-            />
-          </View>
-          <FontAwesomeIcon icon={faRightLeft} style={styles.swap} />
-          <View style={styles.searchField}>
-            <Dropdown
-              options={options}
-              onOptionSelected={() => {}}
-              placeholder={'Destination'}
-            />
-          </View>
-        </View>
-        <View style={styles.searchBody}>
-          <Text>aaaaaaaaaaaaaaaaa</Text>
-        </View>
+        {isDirectionTabActive && <DirectionTab />}
+        {isMapTabActive && <MapTab />}
+        {isProfileTabActive && <ProfileTab />}
       </View>
     </ScrollView>
   );
