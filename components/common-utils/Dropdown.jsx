@@ -5,39 +5,43 @@ import {
   TouchableOpacity,
   Text,
   FlatList,
-  StyleSheet,
+  Modal,
   TouchableWithoutFeedback,
-  Keyboard,
+  StyleSheet,
 } from 'react-native';
 
 const Dropdown = ({options, placeholder, onOptionSelected}) => {
   const [searchText, setSearchText] = useState('');
   const [filteredOptions, setFilteredOptions] = useState(options);
-  const [showOptions, setShowOptions] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
   const inputRef = useRef(null);
 
   const filterOptions = text => {
     setSearchText(text);
     const filtered = options.filter(option =>
-      option.toLowerCase().includes(text.toLowerCase()),
+      option.label.toLowerCase().includes(text.toLowerCase()),
     );
     setFilteredOptions(filtered);
-    setShowOptions(filtered.length > 0);
   };
 
   const onOptionPress = option => {
-    setSearchText(option);
+    setSearchText(option.label);
     onOptionSelected(option);
-    setShowOptions(false);
+    setShowModal(false);
   };
 
   const handleBlur = () => {
-    // Add slight delay to allow option selection
     setTimeout(() => {
       if (!inputRef.current.isFocused()) {
-        setShowOptions(false);
+        setShowModal(false);
       }
     }, 100);
+  };
+
+  const clearSearch = () => {
+    setSearchText('');
+    setFilteredOptions(options);
   };
 
   return (
@@ -46,29 +50,51 @@ const Dropdown = ({options, placeholder, onOptionSelected}) => {
         ref={inputRef}
         style={styles.input}
         value={searchText}
-        onFocus={() => setShowOptions(filteredOptions.length > 0)}
+        onFocus={() => setShowModal(true)}
         onBlur={handleBlur}
         onChangeText={filterOptions}
         placeholder={placeholder}
+        placeholderTextColor={'#aeb3bb'}
       />
-      {showOptions && (
-        <TouchableWithoutFeedback onPress={() => setShowOptions(false)}>
-          <View style={styles.dropdownContainer}>
-            <FlatList
-              data={filteredOptions}
-              style={styles.dropdown}
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  onPress={() => onOptionPress(item)}
-                  style={styles.option}>
-                  <Text style={styles.optionText}>{item}</Text>
-                </TouchableOpacity>
-              )}
-              keyExtractor={(item, index) => index.toString()}
-            />
+      {searchText.length > 0 && (
+        <TouchableOpacity onPress={clearSearch} style={styles.clearButton}>
+          <Text style={styles.clearButtonText}>×</Text>
+        </TouchableOpacity>
+      )}
+
+      <Modal
+        visible={showModal}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => setShowModal(false)}>
+        <TouchableWithoutFeedback onPress={() => setShowModal(false)}>
+          <View style={styles.modalOverlay}>
+            <TouchableWithoutFeedback>
+              <View style={styles.modalContent}>
+                <TextInput
+                  style={styles.input}
+                  value={searchText}
+                  onChangeText={filterOptions}
+                  placeholder={placeholder}
+                  autoFocus
+                />
+                <FlatList
+                  data={filteredOptions}
+                  style={styles.dropdown}
+                  renderItem={({item}) => (
+                    <TouchableOpacity
+                      onPress={() => onOptionPress(item)}
+                      style={styles.option}>
+                      <Text style={styles.optionText}>{item.label}</Text>
+                    </TouchableOpacity>
+                  )}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+              </View>
+            </TouchableWithoutFeedback>
           </View>
         </TouchableWithoutFeedback>
-      )}
+      </Modal>
     </View>
   );
 };
@@ -85,21 +111,41 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     fontSize: 16,
-    height: 45,
-    color: '#374151',
-    backgroundColor: '#F9FAFB',
+    height: 40,
+    color: '#75777a',
+    backgroundColor: 'white',
+    position: 'relative',
   },
-  dropdownContainer: {
+  clearButton: {
     position: 'absolute',
-    top: 50,
-    width: '100%',
-    zIndex: 10,
+    right: 5,
+    top: 5,
+    zIndex: 1,
+    paddingHorizontal: 10,
+  },
+  clearButtonText: {
+    fontSize: 18,
+    color: '#8a8e94',
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '95%',
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 10,
+    alignSelf: 'center',
+    margin: 'auto',
   },
   dropdown: {
     borderWidth: 1,
     borderColor: '#D1D5DB',
     borderRadius: 6,
-    maxHeight: 150,
+    maxHeight: 250,
     backgroundColor: '#FFFFFF',
     elevation: 3,
     shadowColor: '#000',

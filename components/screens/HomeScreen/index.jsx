@@ -14,62 +14,41 @@ const HomeScreen = () => {
   const isProfileTabActive = activeNavItem === 'profile';
 
   return (
-    <ScrollView>
-      <View style={styles.homeScreenContainer}>
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <TitleBar />
+        {isDirectionTabActive && <DirectionTab />}
+        {isMapTabActive && <MapTab />}
+        {isProfileTabActive && <ProfileTab />}
+      </ScrollView>
+
+      <View style={styles.navigationBarContainer}>
         <NavigationBar
           isMapTabActive={isMapTabActive}
           isDirectionTabActive={isDirectionTabActive}
           isProfileTabActive={isProfileTabActive}
           setActiveNavItem={setActiveNavItem}
         />
-
-        {isDirectionTabActive && <DirectionTab />}
-        {isMapTabActive && <MapTab />}
-        {isProfileTabActive && <ProfileTab />}
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  homeScreenContainer: {
-    width: '100%',
-    minHeight: '100%',
+  container: {
     flex: 1,
     position: 'relative',
     backgroundColor: '#f8fcff',
-    paddingHorizontal: 10,
   },
-  titleQuestion: {
-    fontSize: 25,
-    fontWeight: 500,
-    marginBottom: 15,
-    color: '#5e5e5e',
+  scrollViewContent: {
+    paddingBottom: 100,
   },
-  heroSection: {
-    paddingVertical: 25,
-    paddingHorizontal: 15,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    elevation: 100,
-  },
-  searchField: {
-    width: '95%',
-  },
-  swap: {
-    marginLeft: 160,
-    transform: [{rotate: '90deg'}],
-    color: 'gray',
-  },
-  searchBody: {
-    paddingVertical: 25,
-    paddingHorizontal: 15,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    elevation: 100,
-    marginTop: 10,
-    minHeight: 'auto',
+  navigationBarContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
   },
 });
 

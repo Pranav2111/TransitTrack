@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.8,
     shadowRadius: 4,
-    backgroundColor: 'rgba(253, 253, 253, 0.7)',
+    backgroundColor: '#e0e0e0d8',
     overflow: 'hidden',
   },
   navigationButton: {

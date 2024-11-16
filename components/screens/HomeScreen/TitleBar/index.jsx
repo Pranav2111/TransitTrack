@@ -18,10 +18,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logoText: {
-    fontSize: 20,
+    fontSize: 22,
     height: 'auto',
     fontWeight: 700,
-    color: '#5e5e5e',
+    color: '#5b7c99',
+    marginLeft: 10,
   },
 });
 
