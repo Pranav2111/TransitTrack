@@ -17,6 +17,7 @@ const dummyBusDetails = {
 
 const MapTab = () => {
   const [busDetails, setBusDetails] = useRecoilState(busData);
+
   const userLocation = useRecoilValue(currentLocation);
 
   const {isLoading, busNumber} = busDetails || {};
