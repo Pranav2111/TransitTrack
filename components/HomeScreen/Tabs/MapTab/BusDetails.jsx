@@ -3,12 +3,13 @@ import {
   faBus,
   faPerson,
   faLocationArrow,
+  faUserGroup,
+  faLocationDot,
 } from '@fortawesome/free-solid-svg-icons';
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 
 const BusDetails = ({busDetails}) => {
-  console.log('=================', busDetails);
   return (
     <View style={styles.detailsContainer}>
       <Text style={styles.sectionTitle}>Bus Details</Text>
@@ -44,7 +45,7 @@ const BusDetails = ({busDetails}) => {
       </View>
       <View style={styles.detailItem}>
         <FontAwesomeIcon
-          icon={faLocationArrow}
+          icon={faLocationDot}
           size={20}
           color="#333"
           style={styles.icon}
@@ -54,13 +55,13 @@ const BusDetails = ({busDetails}) => {
       </View>
       <View style={styles.detailItem}>
         <FontAwesomeIcon
-          icon={faLocationArrow}
+          icon={faUserGroup}
           size={20}
           color="#333"
           style={styles.icon}
         />
-        <Text style={styles.detailLabel}>Last Station:</Text>
-        <Text style={styles.detailValue}>{busDetails.lastStation}</Text>
+        <Text style={styles.detailLabel}>Available Seats:</Text>
+        <Text style={styles.detailValue}>{busDetails.availableSeats}</Text>
       </View>
     </View>
   );

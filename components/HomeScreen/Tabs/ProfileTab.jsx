@@ -1,38 +1,25 @@
 import React from 'react';
 import {Text, Image, StyleSheet, ScrollView, View} from 'react-native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {
-  faEnvelope,
-  faPhone,
-  faMapMarkerAlt,
-} from '@fortawesome/free-solid-svg-icons';
+import {faEnvelope} from '@fortawesome/free-solid-svg-icons';
+import {useRecoilValue} from 'recoil';
+import {user} from '../../../atom/authAtom';
 
 const ProfileTab = () => {
-  const user = {
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-    phone: '+1 234 567 890',
-    profilePic: 'https://avatar.iran.liara.run/public/boy',
-    location: 'New York, USA',
-  };
+  const userDetails = useRecoilValue(user);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.profileCard}>
-        <Image source={{uri: user.profilePic}} style={styles.profilePic} />
-        <Text style={styles.name}>{user.name}</Text>
+        <Image
+          source={{uri: 'https://avatar.iran.liara.run/public/boy'}}
+          style={styles.profilePic}
+        />
+        <Text style={styles.name}>{userDetails.name}</Text>
         <View style={styles.infoContainer}>
           <View style={styles.infoRow}>
             <FontAwesomeIcon icon={faEnvelope} size={20} color="#555" />
-            <Text style={styles.infoText}>{user.email}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <FontAwesomeIcon icon={faPhone} size={20} color="#555" />
-            <Text style={styles.infoText}>{user.phone}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <FontAwesomeIcon icon={faMapMarkerAlt} size={20} color="#555" />
-            <Text style={styles.infoText}>{user.location}</Text>
+            <Text style={styles.infoText}>{userDetails.email}</Text>
           </View>
         </View>
       </View>

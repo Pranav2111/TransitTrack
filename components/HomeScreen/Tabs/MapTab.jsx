@@ -7,14 +7,6 @@ import {useRecoilState, useRecoilValue} from 'recoil';
 import {busData} from '../../../atom/busDataAtom';
 import {currentLocation} from '../../../atom/location';
 
-const dummyBusDetails = {
-  busNumber: 'MH 12 AB 1234',
-  driverName: 'Ravi Kumar',
-  origin: 'Dadar Station',
-  destination: 'Andheri West',
-  lastStation: 'Vile Parle East',
-};
-
 const MapTab = () => {
   const [busDetails, setBusDetails] = useRecoilState(busData);
 
@@ -27,8 +19,8 @@ const MapTab = () => {
       setTimeout(() => {
         setBusDetails({
           isLoading: false,
-          busNumber: dummyBusDetails.busNumber,
-          details: dummyBusDetails,
+          busNumber: busDetails.busNumber,
+          details: busDetails,
           busRouteData: {},
         });
       }, 3000);

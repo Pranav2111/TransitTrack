@@ -1,16 +1,24 @@
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
 import React, {useState} from 'react';
 import {
+  Alert,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useRecoilState} from 'recoil';
+import {jwt, user} from '../../../atom/authAtom';
 
 const SignUpForm = () => {
+  const [_, setToken] = useRecoilState(jwt);
+  const [_u, setUser] = useRecoilState(user);
+
   const [formData, setFormData] = useState({
-    userName: '',
+    name: '',
+    email: '',
     password: '',
     confirmPassword: '',
   });
@@ -26,30 +34,65 @@ const SignUpForm = () => {
   };
 
   const handleSubmit = () => {
+    const {name, email, password, confirmPassword} = formData || {};
+
+    if (!email || !password || !confirmPassword) {
+      Alert.alert('Missing Fields', 'Please fill out all the fields.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert(
+        'Password mismatch',
+        'The passwords you entered do not match. Please try again.',
+      );
+      return;
+    }
+
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setTimeout(() => {
-        navigation.navigate('home'), 1500;
+
+    axios
+      .post('http://192.168.0.103:5000/api/auth/signup', {
+        name,
+        email,
+        password,
+      })
+      .then(response => {
+        setToken(`Bearer ${response?.data?.token}`);
+        setUser(response.data?.user);
+        setTimeout(() => {
+          setIsLoading(false);
+          navigation.navigate('home');
+        }, 3000);
+      })
+      .catch(err => {
+        console.log('==============>', JSON.stringify(err));
+        setIsLoading(false);
       });
-    }, 1000);
   };
 
   return (
     <View style={styles.signUpBox}>
       <TextInput
         style={styles.input}
-        placeholder="Username"
+        placeholder="Name"
         placeholderTextColor="#888"
-        value={formData.userName}
-        onChangeText={value => handleInput('userName', value)}
+        value={formData.name}
+        onChangeText={value => handleInput('name', value)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        placeholderTextColor="#888"
+        value={formData.email}
+        onChangeText={value => handleInput('email', value)}
       />
       <TextInput
         style={styles.input}
         placeholder="Password"
         placeholderTextColor="#888"
         secureTextEntry
-        value={formData.userName}
+        value={formData.password}
         onChangeText={value => handleInput('password', value)}
       />
       <TextInput
@@ -57,7 +100,7 @@ const SignUpForm = () => {
         placeholder="Confirm Password"
         placeholderTextColor="#888"
         secureTextEntry
-        value={formData.userName}
+        value={formData.confirmPassword}
         onChangeText={value => handleInput('confirmPassword', value)}
       />
       <TouchableOpacity
@@ -65,7 +108,7 @@ const SignUpForm = () => {
         onPress={handleSubmit}
         style={[styles.button, isLoading && styles.disabledButton]}>
         <Text style={styles.signUpbuttonText}>
-          {isLoading ? 'Signing Up...' : 'Sign Up'}
+          {isLoading ? 'Loading...' : 'Sign Up'}
         </Text>
       </TouchableOpacity>
     </View>
@@ -81,7 +124,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '100%',
-    height: 45,
+    height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 5,
@@ -91,22 +134,19 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '80%',
-    height: 50,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#2399dd',
     borderRadius: 50,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
   },
   disabledButton: {
     backgroundColor: '#5793c4',
   },
   signUpbuttonText: {
-    width: 70,
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 16,
   },
 });
 

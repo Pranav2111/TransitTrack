@@ -1,15 +1,22 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {
+  Alert,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import axios from 'axios';
+import {useRecoilState} from 'recoil';
+import {jwt, user} from '../../../atom/authAtom';
 
 const LoginForm = () => {
-  const [formData, setFormData] = useState({userName: '', password: ''});
+  const [_t, setToken] = useRecoilState(jwt);
+  const [_u, setUser] = useRecoilState(user);
+
+  const [formData, setFormData] = useState({email: '', password: ''});
   const [isLoading, setIsLoading] = useState(false);
 
   const navigation = useNavigation();
@@ -22,23 +29,42 @@ const LoginForm = () => {
   };
 
   const handleSubmit = () => {
+    const {email, password} = formData || {};
+
+    if (!email || !password) {
+      Alert.alert('Missing Fields', 'Please fill out all the fields.');
+      return;
+    }
+
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setTimeout(() => {
-        navigation.navigate('home'), 1500;
+
+    axios
+      .post('http://192.168.0.103:5000/api/auth/login', {
+        email: email,
+        password: password,
+      })
+      .then(response => {
+        setToken(`Bearer ${response?.data?.token}`);
+        setUser(response.data?.user);
+        setTimeout(() => {
+          setIsLoading(false);
+          navigation.navigate('home');
+        }, 3000);
+      })
+      .catch(err => {
+        console.log('==============>', JSON.stringify(err));
+        setIsLoading(false);
       });
-    }, 1000);
   };
 
   return (
     <View style={styles.loginBox}>
       <TextInput
         style={styles.input}
-        placeholder="Username"
+        placeholder="Email"
         placeholderTextColor="#888"
         value={formData.userName}
-        onChangeText={value => handleInput('userName', value)}
+        onChangeText={value => handleInput('email', value)}
       />
       <TextInput
         style={styles.input}
@@ -68,7 +94,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '100%',
-    height: 45,
+    height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 5,
@@ -78,13 +104,11 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '80%',
-    height: 45,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#2399dd',
     borderRadius: 50,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
   },
   disabledButton: {
     backgroundColor: '#5793c4',
@@ -92,7 +116,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 16,
   },
 });
 

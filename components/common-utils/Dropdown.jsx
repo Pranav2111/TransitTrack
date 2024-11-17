@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   TextInput,
@@ -40,9 +40,14 @@ const Dropdown = ({options, placeholder, onOptionSelected}) => {
   };
 
   const clearSearch = () => {
+    onOptionSelected(null);
     setSearchText('');
     setFilteredOptions(options);
   };
+
+  useEffect(() => {
+    setFilteredOptions(options);
+  }, [options]);
 
   return (
     <View style={styles.container}>
@@ -129,17 +134,15 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     width: '95%',
     backgroundColor: 'white',
-    padding: 10,
+    padding: 20,
     borderRadius: 10,
     alignSelf: 'center',
-    margin: 'auto',
+    top: 100,
   },
   dropdown: {
     borderWidth: 1,
@@ -152,8 +155,8 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    width: '97%',
     alignSelf: 'center',
+    width: '100%',
   },
   option: {
     paddingVertical: 10,

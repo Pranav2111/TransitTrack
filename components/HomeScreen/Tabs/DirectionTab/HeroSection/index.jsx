@@ -1,56 +1,77 @@
-import React from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {getGreeting} from './helper';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faRightLeft} from '@fortawesome/free-solid-svg-icons';
 import Dropdown from '../../../../../components/common-utils/Dropdown';
 import {routeSearch} from '../../../../../atom/busDataAtom';
-import {useRecoilState} from 'recoil';
+import {useRecoilState, useRecoilValue} from 'recoil';
+import {jwt, user} from '../../../../../atom/authAtom';
+import axios from 'axios';
+import {busStops} from '../../../../../atom/formRequisite';
 
-const HeroSection = ({formValues}) => {
+const HeroSection = () => {
+  const userData = useRecoilValue(user);
+  const token = useRecoilValue(jwt);
+
   const [_, setRoute] = useRecoilState(routeSearch);
+  const [options, setOptions] = useRecoilState(busStops);
 
-  const formValue = {};
+  const [formValues, setFormValues] = useState({
+    origin: '',
+    destination: '',
+  });
 
   const isButtonDisabled = !formValues?.origin || !formValues?.destination;
-
   const greetText = getGreeting();
 
-  const options = [
-    {label: 'Mumbai (BOM)', value: 'bom'},
-    {label: 'Pune (PNQ)', value: 'pnq'},
-    {label: 'Nagpur (NAG)', value: 'nag'},
-    {label: 'Nashik (ISK)', value: 'isk'},
-    {label: 'Aurangabad (IXU)', value: 'ixu'},
-    {label: 'Thane (THN)', value: 'thn'},
-    {label: 'Solapur (SSE)', value: 'sse'},
-    {label: 'Kolhapur (KLH)', value: 'klh'},
-    {label: 'Satara (SRT)', value: 'srt'},
-    {label: 'Chandrapur (CDP)', value: 'cdp'},
-    {label: 'Jalgaon (JAL)', value: 'jal'},
-    {label: 'Kalyan (KYN)', value: 'kyn'},
-    {label: 'Vasai (VSI)', value: 'vsi'},
-    {label: 'Akola (AKO)', value: 'ako'},
-    {label: 'Amravati (AMR)', value: 'amr'},
-  ];
-
   const handleOptionSelect = (field, value) => {
-    formValue[field] = value;
+    setFormValues({
+      ...formValues,
+      [field]: value,
+    });
   };
 
   const handleSubmit = () => {
-    setRoute(formValue);
-    // setIsLoading(true);
-    // setTimeout(() => {
-    //   setIsLoading(false);
-    // }, 2000);
+    axios
+      .get(
+        `http://192.168.0.103:5000/api/bus/scheduled-buses?originId=${formValues.origin.value}&destinationId=${formValues.destination.value}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        },
+      )
+      .then(res => {
+        setRoute({
+          origin: formValues.origin.label,
+          destination: formValues.destination.label,
+          routes: res.data.schedules,
+        });
+      });
   };
+
+  useEffect(() => {
+    if (options.length) {
+      return;
+    }
+    axios
+      .get('http://192.168.0.103:5000/api/form-requisite/bus-stops', {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then(res => {
+        setOptions(res.data);
+      });
+  }, []);
 
   return (
     <View style={styles.heroSection}>
       <View style={styles.greetSection}>
         <Text style={styles.greetText}>{greetText}</Text>
-        <Text style={styles.name}>Pranav</Text>
+        <Text style={styles.name}>{userData?.name || 'User'}</Text>
 
         <Text style={styles.titleQuestion}>Where do you</Text>
         <Text style={styles.titleQuestion}>want to go?</Text>
@@ -79,6 +100,7 @@ const HeroSection = ({formValues}) => {
         />
       </View>
       <TouchableOpacity
+        disabled={isButtonDisabled}
         style={[styles.submitButton, isButtonDisabled && styles.disabledButton]}
         onPress={handleSubmit}>
         <Text style={styles.buttonText}>
@@ -145,7 +167,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   disabledButton: {
-    backgroundColor: '#5793c4',
+    backgroundColor: '#3b678a',
   },
   buttonText: {
     fontSize: 17,

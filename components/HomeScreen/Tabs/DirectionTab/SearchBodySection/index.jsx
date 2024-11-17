@@ -10,79 +10,33 @@ import {useRecoilState, useRecoilValue} from 'recoil';
 import {busData, routeSearch} from '../../../../../atom/busDataAtom';
 import {tabNavigator} from '../../../../../atom/tabNavigator';
 
-const busList = [
-  {
-    busNumber: 'MH-89-2121',
-    timing: '11:00 AM - 03:00 PM',
-    spec: 'Non AC',
-    seatsAvailable: 32,
-  },
-  {
-    busNumber: 'MH-99-4242',
-    timing: '02:00 PM - 06:00 PM',
-    spec: 'AC',
-    seatsAvailable: 18,
-  },
-  {
-    busNumber: 'MH-77-5656',
-    timing: '05:00 AM - 09:00 AM',
-    spec: 'Non AC',
-    seatsAvailable: 45,
-  },
-  {
-    busNumber: 'MH-88-3344',
-    timing: '06:00 AM - 10:00 AM',
-    spec: 'AC',
-    seatsAvailable: 25,
-  },
-  {
-    busNumber: 'MH-55-1010',
-    timing: '08:00 AM - 12:00 PM',
-    spec: 'Non AC',
-    seatsAvailable: 30,
-  },
-  {
-    busNumber: 'MH-44-3030',
-    timing: '12:00 PM - 04:00 PM',
-    spec: 'AC',
-    seatsAvailable: 20,
-  },
-  {
-    busNumber: 'MH-66-7070',
-    timing: '01:00 PM - 05:00 PM',
-    spec: 'Non AC',
-    seatsAvailable: 40,
-  },
-  {
-    busNumber: 'MH-22-9090',
-    timing: '04:00 PM - 08:00 PM',
-    spec: 'AC',
-    seatsAvailable: 15,
-  },
-  {
-    busNumber: 'MH-33-1212',
-    timing: '07:00 AM - 11:00 AM',
-    spec: 'Non AC',
-    seatsAvailable: 50,
-  },
-  {
-    busNumber: 'MH-11-2020',
-    timing: '09:00 AM - 01:00 PM',
-    spec: 'AC',
-    seatsAvailable: 22,
-  },
-];
+const formatTime = date => {
+  return new Date(date).toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+};
+
+// Main method to get the formatted time range
+const getFormattedTimeRange = (start_date, end_date) => {
+  const startTime = formatTime(start_date);
+  const endTime = formatTime(end_date);
+
+  return `${startTime} - ${endTime}`;
+};
 
 const SearchBodySection = () => {
   const [busDetails, setBusDetails] = useRecoilState(busData);
   const [_, setActiveNavItem] = useRecoilState(tabNavigator);
 
-  const {origin, destination} = useRecoilValue(routeSearch) || {};
+  const {origin, destination, routes} = useRecoilValue(routeSearch) || {};
 
-  const handleBusSelect = busNumber => {
+  const handleBusSelect = bus => {
     setBusDetails({
       ...busDetails,
-      busNumber,
+      busNumber: bus.busNumber,
+      details: bus,
       isLoading: true,
     });
     setTimeout(() => {
@@ -94,28 +48,30 @@ const SearchBodySection = () => {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>
         Bus Schedules: &nbsp;
-        <Text style={styles.titleName}>{origin?.label} </Text>-
-        <Text style={styles.titleName}> {destination?.label}</Text>
+        <Text style={styles.titleName}>{origin} </Text>-
+        <Text style={styles.titleName}> {destination}</Text>
       </Text>
-      {busList.map((bus, index) => (
+      {routes.map((bus, index) => (
         <TouchableOpacity
           key={index}
           style={styles.cardContainer}
-          onPress={() => handleBusSelect(bus.busNumber)}>
+          onPress={() => handleBusSelect(bus)}>
           <View style={styles.leftSection}>
             <Text style={styles.busName}>{bus.busNumber}</Text>
-            <Text style={styles.busTiming}>{bus.timing}</Text>
+            <Text style={styles.busTiming}>
+              {getFormattedTimeRange(bus.start_time, bus.end_time)}
+            </Text>
           </View>
           <View style={styles.rightSection}>
             <Text
               style={[
                 styles.busSpec,
-                bus.spec === 'AC' ? styles.acSpec : styles.nonAcSpec,
+                bus.ac_type === 'AC' ? styles.acSpec : styles.nonAcSpec,
               ]}>
-              {bus.spec}
+              {bus.ac_type}
             </Text>
-            <Text style={styles.seats}>
-              {bus.seatsAvailable} Seats Available
+            <Text style={[styles.seats, !bus.availableSeats && styles.noSeat]}>
+              {bus.availableSeats || 0} Seats Available
             </Text>
           </View>
         </TouchableOpacity>
@@ -144,7 +100,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   titleName: {
-    fontSize: 15,
+    fontSize: 16,
     color: '#969696',
   },
   cardContainer: {
@@ -193,6 +149,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#4CAF50',
     fontWeight: '500',
+  },
+  noSeat: {
+    color: '#e70000',
   },
 });
 
