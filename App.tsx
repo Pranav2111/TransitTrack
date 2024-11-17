@@ -1,8 +1,13 @@
 import React from 'react';
-import AppNavigator from './components/AppNavigator';
+import {RecoilRoot} from 'recoil';
+import AppNavigator from './AppNavigator';
 
 const App = () => {
-  return <AppNavigator />;
+  return (
+    <RecoilRoot>
+      <AppNavigator />
+    </RecoilRoot>
+  );
 };
 
 export default App;

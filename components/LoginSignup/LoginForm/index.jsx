@@ -62,13 +62,12 @@ const LoginForm = () => {
 
 const styles = StyleSheet.create({
   loginBox: {
-    height: '80%',
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
   input: {
-    width: '80%',
+    width: '100%',
     height: 45,
     borderColor: '#ccc',
     borderWidth: 1,
@@ -82,13 +81,13 @@ const styles = StyleSheet.create({
     height: 45,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#007BFF',
+    backgroundColor: '#2399dd',
     borderRadius: 50,
     paddingVertical: 10,
     paddingHorizontal: 20,
   },
   disabledButton: {
-    backgroundColor: '#6098ff',
+    backgroundColor: '#5793c4',
   },
   buttonText: {
     color: 'white',

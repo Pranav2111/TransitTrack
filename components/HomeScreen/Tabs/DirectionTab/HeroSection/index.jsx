@@ -1,13 +1,18 @@
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {getGreeting} from './helper';
-import Dropdown from '../../../../../common-utils/Dropdown';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faRightLeft} from '@fortawesome/free-solid-svg-icons';
+import Dropdown from '../../../../../components/common-utils/Dropdown';
+import {routeSearch} from '../../../../../atom/busDataAtom';
+import {useRecoilState} from 'recoil';
 
-const HeroSection = ({formValues, isLoading, setFormValues, setIsLoading}) => {
-  const isButtonDisabled =
-    !formValues?.origin || !formValues?.destination || isLoading;
+const HeroSection = ({formValues}) => {
+  const [_, setRoute] = useRecoilState(routeSearch);
+
+  const formValue = {};
+
+  const isButtonDisabled = !formValues?.origin || !formValues?.destination;
 
   const greetText = getGreeting();
 
@@ -30,14 +35,15 @@ const HeroSection = ({formValues, isLoading, setFormValues, setIsLoading}) => {
   ];
 
   const handleOptionSelect = (field, value) => {
-    setFormValues({...formValues, [field]: value});
+    formValue[field] = value;
   };
 
   const handleSubmit = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+    setRoute(formValue);
+    // setIsLoading(true);
+    // setTimeout(() => {
+    //   setIsLoading(false);
+    // }, 2000);
   };
 
   return (
@@ -45,15 +51,16 @@ const HeroSection = ({formValues, isLoading, setFormValues, setIsLoading}) => {
       <View style={styles.greetSection}>
         <Text style={styles.greetText}>{greetText}</Text>
         <Text style={styles.name}>Pranav</Text>
+
+        <Text style={styles.titleQuestion}>Where do you</Text>
+        <Text style={styles.titleQuestion}>want to go?</Text>
+
         <Image
           source={require('../../../../../assets/bg.png')}
           style={styles.bg}
         />
       </View>
-      <View>
-        <Text style={styles.titleQuestion}>Where do you</Text>
-        <Text style={styles.titleQuestion}>want to go?</Text>
-      </View>
+
       <View style={styles.searchField}>
         <Dropdown
           options={options}
@@ -75,7 +82,7 @@ const HeroSection = ({formValues, isLoading, setFormValues, setIsLoading}) => {
         style={[styles.submitButton, isButtonDisabled && styles.disabledButton]}
         onPress={handleSubmit}>
         <Text style={styles.buttonText}>
-          {isLoading ? 'Searching...' : 'Search Buses'}
+          {false ? 'Searching...' : 'Search Buses'}
         </Text>
       </TouchableOpacity>
     </View>
@@ -86,7 +93,7 @@ const styles = StyleSheet.create({
   greetSection: {
     position: 'relative',
     height: 115,
-    marginBottom: -30,
+    marginBottom: 35,
   },
   greetText: {
     fontSize: 25,
@@ -97,13 +104,14 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: '#4699c9',
     fontWeight: 400,
+    marginBottom: 10,
   },
   bg: {
     position: 'absolute',
     right: 0,
-    width: 150,
+    width: 160,
     resizeMode: 'contain',
-    bottom: -60,
+    bottom: -50,
   },
   titleQuestion: {
     fontSize: 20,

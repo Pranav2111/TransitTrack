@@ -5,9 +5,11 @@ import TitleBar from './TitleBar';
 import DirectionTab from './Tabs/DirectionTab';
 import MapTab from './Tabs/MapTab';
 import ProfileTab from './Tabs/ProfileTab';
+import {useRecoilState} from 'recoil';
+import {tabNavigator} from '../../atom/tabNavigator';
 
 const HomeScreen = () => {
-  const [activeNavItem, setActiveNavItem] = useState('direction');
+  const [activeNavItem, setActiveNavItem] = useRecoilState(tabNavigator);
 
   const isMapTabActive = activeNavItem === 'map';
   const isDirectionTabActive = activeNavItem === 'direction';
@@ -39,9 +41,6 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'relative',
     backgroundColor: '#f8fcff',
-  },
-  scrollViewContent: {
-    paddingBottom: 100,
   },
   navigationBarContainer: {
     position: 'absolute',

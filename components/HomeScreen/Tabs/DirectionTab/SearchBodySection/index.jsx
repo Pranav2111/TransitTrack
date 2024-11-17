@@ -1,7 +1,16 @@
 import React from 'react';
-import {StyleSheet, Text, View, ScrollView} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
+import {useRecoilState, useRecoilValue} from 'recoil';
+import {busData, routeSearch} from '../../../../../atom/busDataAtom';
+import {tabNavigator} from '../../../../../atom/tabNavigator';
 
-const busData = [
+const busList = [
   {
     busNumber: 'MH-89-2121',
     timing: '11:00 AM - 03:00 PM',
@@ -64,16 +73,35 @@ const busData = [
   },
 ];
 
-const SearchBodySection = ({origin, destination}) => {
+const SearchBodySection = () => {
+  const [busDetails, setBusDetails] = useRecoilState(busData);
+  const [_, setActiveNavItem] = useRecoilState(tabNavigator);
+
+  const {origin, destination} = useRecoilValue(routeSearch) || {};
+
+  const handleBusSelect = busNumber => {
+    setBusDetails({
+      ...busDetails,
+      busNumber,
+      isLoading: true,
+    });
+    setTimeout(() => {
+      setActiveNavItem('map');
+    }, 10);
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>
         Bus Schedules: &nbsp;
-        <Text style={styles.titleName}>{origin} </Text>-
-        <Text style={styles.titleName}> {destination}</Text>
+        <Text style={styles.titleName}>{origin?.label} </Text>-
+        <Text style={styles.titleName}> {destination?.label}</Text>
       </Text>
-      {busData.map((bus, index) => (
-        <View key={index} style={styles.cardContainer}>
+      {busList.map((bus, index) => (
+        <TouchableOpacity
+          key={index}
+          style={styles.cardContainer}
+          onPress={() => handleBusSelect(bus.busNumber)}>
           <View style={styles.leftSection}>
             <Text style={styles.busName}>{bus.busNumber}</Text>
             <Text style={styles.busTiming}>{bus.timing}</Text>
@@ -90,7 +118,7 @@ const SearchBodySection = ({origin, destination}) => {
               {bus.seatsAvailable} Seats Available
             </Text>
           </View>
-        </View>
+        </TouchableOpacity>
       ))}
     </ScrollView>
   );
@@ -100,6 +128,7 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: 20,
     paddingHorizontal: 15,
+    paddingBottom: 100,
     backgroundColor: '#f9f9f9',
     borderRadius: 12,
     marginTop: 15,
