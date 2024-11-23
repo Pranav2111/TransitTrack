@@ -6,33 +6,53 @@ import BusDetails from './MapTab/BusDetails';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {busData} from '../../../atom/busDataAtom';
 import {currentLocation} from '../../../atom/location';
+import axios from 'axios';
+import {jwt} from '../../../atom/authAtom';
 
+let refreshInterval;
 const MapTab = () => {
   const [busDetails, setBusDetails] = useRecoilState(busData);
 
+  const token = useRecoilValue(jwt);
   const userLocation = useRecoilValue(currentLocation);
 
-  const {isLoading, busNumber} = busDetails || {};
+  const {path} = busDetails || {};
+
+  const handleGetBusPath = bus_number =>
+    axios.get(
+      `http://192.168.0.103:5000/api/bus/bus-path?bus_number=${bus_number}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      },
+    );
+
+  const refreshBusPath = async () => {
+    const response = await handleGetBusPath(busDetails.details.busNumber);
+    const busPath = response.data.path;
+
+    if (!busPath.length) {
+      return;
+    }
+
+    const updateBusDetails = {
+      ...busDetails,
+      path: busPath,
+    };
+
+    setBusDetails(updateBusDetails);
+  };
 
   useEffect(() => {
-    if (busNumber && !isLoading) {
-      setTimeout(() => {
-        setBusDetails({
-          isLoading: false,
-          busNumber: busDetails.busNumber,
-          details: busDetails,
-          busRouteData: {},
-        });
-      }, 3000);
-    }
-  }, [isLoading, busNumber]);
+    refreshInterval = setInterval(() => {
+      refreshBusPath();
+    }, 1000 * 15);
 
-  const nashikToPunePath = [
-    [73.7844, 19.9975],
-    [73.8532, 19.8532],
-    [74.0616, 19.6365],
-    [74.2671, 18.5186],
-  ];
+    return () => {
+      clearInterval(refreshInterval);
+    };
+  }, []);
 
   return (
     <View style={styles.page}>
@@ -40,7 +60,7 @@ const MapTab = () => {
         <BusDetails busDetails={busDetails?.details} />
       )}
 
-      <Map currentLocation={userLocation} path={nashikToPunePath} />
+      <Map currentLocation={userLocation} path={path} />
     </View>
   );
 };

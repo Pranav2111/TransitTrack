@@ -10,6 +10,7 @@ import {useRecoilState, useRecoilValue} from 'recoil';
 import {jwt, user} from '../../../../../atom/authAtom';
 import axios from 'axios';
 import {busStops} from '../../../../../atom/formRequisite';
+import {toTitleCase} from '../../../../common-utils/commonMethods';
 
 const HeroSection = () => {
   const userData = useRecoilValue(user);
@@ -71,7 +72,7 @@ const HeroSection = () => {
     <View style={styles.heroSection}>
       <View style={styles.greetSection}>
         <Text style={styles.greetText}>{greetText}</Text>
-        <Text style={styles.name}>{userData?.name || 'User'}</Text>
+        <Text style={styles.name}>{toTitleCase(userData?.name) || 'User'}</Text>
 
         <Text style={styles.titleQuestion}>Where do you</Text>
         <Text style={styles.titleQuestion}>want to go?</Text>
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 25,
     color: '#4699c9',
-    fontWeight: 400,
+    fontWeight: 500,
     marginBottom: 10,
   },
   bg: {

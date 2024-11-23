@@ -9,8 +9,7 @@ export const busData = atom({
   key: 'busData',
   default: {
     isLoading: false,
-    busNumber: null,
     details: {},
-    busRouteData: {},
+    path: {},
   },
 });
