@@ -58,15 +58,15 @@ const SignUpForm = () => {
         password,
       })
       .then(response => {
-        setToken(`Bearer ${response?.data?.token}`);
+        const {token, redirect_screen} = response?.data?.user || {};
+        setToken(token);
         setUser(response.data?.user);
         setTimeout(() => {
           setIsLoading(false);
-          navigation.navigate('home');
-        }, 3000);
+          navigation.navigate(redirect_screen);
+        }, 1000);
       })
-      .catch(err => {
-        console.log('==============>', JSON.stringify(err));
+      .catch(() => {
         setIsLoading(false);
       });
   };

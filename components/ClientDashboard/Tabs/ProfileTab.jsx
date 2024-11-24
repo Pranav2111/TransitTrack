@@ -1,12 +1,29 @@
 import React from 'react';
-import {Text, Image, StyleSheet, ScrollView, View} from 'react-native';
+import {
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  View,
+  TouchableOpacity,
+} from 'react-native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faEnvelope} from '@fortawesome/free-solid-svg-icons';
-import {useRecoilValue} from 'recoil';
-import {user} from '../../../atom/authAtom';
+import {useRecoilState} from 'recoil';
+import {jwt, user} from '../../../atom/authAtom';
+import {useNavigation} from '@react-navigation/native';
 
 const ProfileTab = () => {
-  const userDetails = useRecoilValue(user);
+  const [_t, setToken] = useRecoilState(jwt);
+  const [userDetails, setUserDetails] = useRecoilState(user);
+
+  const navigation = useNavigation();
+
+  const handleLogOut = () => {
+    navigation.navigate('login-signup');
+    setToken(null);
+    setUserDetails({});
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -23,13 +40,18 @@ const ProfileTab = () => {
           </View>
         </View>
       </View>
+
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogOut}>
+        <Text style={styles.logoutButtonText}>Log Out</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
+    flex: 1,
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
@@ -74,6 +96,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#555',
     marginLeft: 8,
+  },
+  logoutButton: {
+    marginTop: 100,
+    backgroundColor: '#4699c9',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+    width: 120,
+  },
+  logoutButtonText: {
+    textAlign: 'center',
+    color: '#fff',
+    fontWeight: 500,
+    fontSize: 16,
   },
 });
 

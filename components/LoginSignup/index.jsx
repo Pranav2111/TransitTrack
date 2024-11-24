@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   View,
@@ -8,15 +9,29 @@ import {
 } from 'react-native';
 import LoginForm from './LoginForm';
 import SignUpForm from './SignupForm';
+import {useRecoilValue} from 'recoil';
+import {user} from '../../atom/authAtom';
+import {useNavigation, useNavigationState} from '@react-navigation/native';
 
 const LoginSignup = () => {
+  const userDetails = useRecoilValue(user);
+
   const [currentForm, setCurrentForm] = useState('login');
+
+  const navigation = useNavigation();
+  const routeName = useNavigationState(state => state.routes[state.index].name);
 
   const isLoginForm = currentForm == 'login';
 
   const handleFormSwitch = () => {
     setCurrentForm(currentForm == 'login' ? 'sign-up' : 'login');
   };
+
+  useEffect(() => {
+    if (routeName === 'login-signup' && userDetails?.redirect_screen) {
+      navigation.navigate(userDetails.redirect_screen);
+    }
+  }, [routeName]);
 
   return (
     <View style={styles.container}>

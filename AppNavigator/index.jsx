@@ -3,20 +3,17 @@ import React, {useLayoutEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LoginAndSignup from '../screens/LoginAndSignup';
-import Home from '../screens/Home';
 import {currentLocation} from '../atom/location';
-import {useRecoilState, useResetRecoilState} from 'recoil';
+import {useRecoilState} from 'recoil';
 import {Platform} from 'react-native';
 import {getLocation, requestLocationPermission} from './helper';
+import Client from '../screens/Client';
+import Driver from '../screens/Driver';
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
-  // const resetFunctions = atoms.map(atom => useResetRecoilState(atom));
   const [_, setUserLocation] = useRecoilState(currentLocation);
-
-  // Reset all atoms on component mount
-  // resetFunctions.forEach(reset => reset());
 
   useLayoutEffect(() => {
     const fetchLocation = async () => {
@@ -44,8 +41,13 @@ const AppNavigator = () => {
           options={{headerShown: false}}
         />
         <Stack.Screen
-          name="home"
-          component={Home}
+          name="client-dashboard"
+          component={Client}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="driver-dashboard"
+          component={Driver}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

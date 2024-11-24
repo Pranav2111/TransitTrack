@@ -1,14 +1,14 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import NavigationBar from './NavigationBar';
-import TitleBar from './TitleBar';
+import TitleBar from '../common-utils/TitleBar';
 import DirectionTab from './Tabs/DirectionTab';
 import MapTab from './Tabs/MapTab';
 import ProfileTab from './Tabs/ProfileTab';
 import {useRecoilState} from 'recoil';
 import {tabNavigator} from '../../atom/tabNavigator';
 
-const HomeScreen = () => {
+const ClientDashboard = () => {
   const [activeNavItem, setActiveNavItem] = useRecoilState(tabNavigator);
 
   const isMapTabActive = activeNavItem === 'map';
@@ -51,4 +51,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default ClientDashboard;

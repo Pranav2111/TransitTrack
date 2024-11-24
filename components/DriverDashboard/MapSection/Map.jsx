@@ -3,10 +3,17 @@ import React, {useEffect, useRef} from 'react';
 import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Mapbox from '@rnmapbox/maps';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faCrosshairs} from '@fortawesome/free-solid-svg-icons';
-import {recenterToPath, recenterToUserLocation} from './helper';
+import {
+  faBus,
+  faCrosshairs,
+  faLocationDot,
+} from '@fortawesome/free-solid-svg-icons';
 import {useRecoilValue} from 'recoil';
-import {currentLocation} from '../../../../atom/location';
+import {currentLocation} from '../../../atom/location';
+import {
+  recenterToPath,
+  recenterToUserLocation,
+} from '../../common-utils/helperMethods';
 
 Mapbox.setAccessToken(
   'sk.eyJ1IjoicGF0aWxwcmFuYXYyMSIsImEiOiJjbTNqM3FsbGgwOGhlMmpyMjE5Y2lkcG85In0.3iLLMA0SaUvjZIH9hMb0JQ',
@@ -14,7 +21,7 @@ Mapbox.setAccessToken(
 
 const mapHeight = Dimensions.get('window').height;
 
-const Map = ({path}) => {
+const Map = ({path, originLocation, destinationLocation}) => {
   const userLocation = useRecoilValue(currentLocation);
 
   const cameraRef = useRef(null);
@@ -47,7 +54,7 @@ const Map = ({path}) => {
   }, [path, userLocation]);
 
   return (
-    <View style={{flex: 1}}>
+    <View>
       <Mapbox.MapView
         style={[styles.map, {height: mapHeight - 150}]}
         zoomEnabled
@@ -60,11 +67,41 @@ const Map = ({path}) => {
           <View style={styles.marker} />
         </Mapbox.PointAnnotation>
 
+        {originLocation.length && (
+          <Mapbox.PointAnnotation
+            id="origin-location"
+            coordinate={originLocation}>
+            <View>
+              <FontAwesomeIcon size={22} icon={faLocationDot} color="green" />
+            </View>
+          </Mapbox.PointAnnotation>
+        )}
+
+        {path.length && (
+          <Mapbox.PointAnnotation
+            id="bus-icon"
+            coordinate={path[path.length - 1]}>
+            <View>
+              <FontAwesomeIcon size={22} icon={faBus} style={styles.busIcon} />
+            </View>
+          </Mapbox.PointAnnotation>
+        )}
+
+        {destinationLocation.length && (
+          <Mapbox.PointAnnotation
+            id="destination-location"
+            coordinate={destinationLocation}>
+            <View>
+              <FontAwesomeIcon size={22} icon={faLocationDot} color="red" />
+            </View>
+          </Mapbox.PointAnnotation>
+        )}
+
         {path.length > 0 && (
           <Mapbox.ShapeSource id="route" shape={geoJSON}>
             <Mapbox.LineLayer
               id="route-line"
-              style={{lineColor: '#007aff', lineWidth: 4}}
+              style={{lineColor: '#007aff', lineWidth: 3}}
             />
           </Mapbox.ShapeSource>
         )}
@@ -82,6 +119,8 @@ const Map = ({path}) => {
 const styles = StyleSheet.create({
   map: {
     width: '100%',
+    height: 500,
+    marginTop: 30,
   },
   marker: {
     backgroundColor: '#007aff',
@@ -91,10 +130,9 @@ const styles = StyleSheet.create({
     borderWidth: 5,
     borderColor: '#9b9b9b',
   },
-
   recenterButtonContainer: {
     position: 'absolute',
-    top: 20,
+    top: 50,
     right: 20,
     zIndex: 111,
     padding: 10,
@@ -105,6 +143,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.5,
     elevation: 5,
+  },
+  busIcon: {
+    zIndex: 11,
   },
 });
 
