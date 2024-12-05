@@ -1,6 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useEffect, useRef} from 'react';
-import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Mapbox from '@rnmapbox/maps';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCrosshairs} from '@fortawesome/free-solid-svg-icons';
@@ -17,7 +23,7 @@ Mapbox.setAccessToken(
 
 const mapHeight = Dimensions.get('window').height;
 
-const Map = ({path}) => {
+const Map = ({busLocation, path}) => {
   const userLocation = useRecoilValue(currentLocation);
 
   const cameraRef = useRef(null);
@@ -49,10 +55,12 @@ const Map = ({path}) => {
     }
   }, [path, userLocation]);
 
+  console.log(busLocation);
+
   return (
-    <View style={{flex: 1}}>
+    <View>
       <Mapbox.MapView
-        style={[styles.map, {height: mapHeight - 150}]}
+        style={[styles.map, {height: mapHeight - 430}]}
         zoomEnabled
         pitchEnabled
         scrollEnabled
@@ -62,6 +70,16 @@ const Map = ({path}) => {
         <Mapbox.PointAnnotation id="user-location" coordinate={userLocation}>
           <View style={styles.marker} />
         </Mapbox.PointAnnotation>
+
+        {busLocation && (
+          <Mapbox.PointAnnotation id="bus-location" coordinate={busLocation}>
+            <Image
+              source={require('../../../../assets/bus.png')}
+              style={styles.bus}
+              resizeMode="contain"
+            />
+          </Mapbox.PointAnnotation>
+        )}
 
         {path.length > 0 && (
           <Mapbox.ShapeSource id="route" shape={geoJSON}>
@@ -108,6 +126,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.5,
     elevation: 5,
+  },
+  bus: {
+    height: 40,
+    width: 25,
   },
 });
 

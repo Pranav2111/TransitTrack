@@ -1,30 +1,78 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useEffect, useState} from 'react';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import Geolocation from 'react-native-geolocation-service';
 import {
   faBus,
   faLocationArrow,
   faLocationDot,
 } from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import axios from 'axios';
+import {useRecoilValue} from 'recoil';
+import {jwt} from '../../../atom/authAtom';
+import {formatDate} from '../../common-utils/commonMethods';
+import {fetchAndFeedCurrentLocation} from './helper';
 
+let locationTracking;
 const HeroSection = () => {
   const [isJourneyStarted, setIsJourneyStarted] = useState(false);
+  const [busDetails, setBusDetails] = useState({});
 
-  const busDetails = {
-    bus_number: null,
-    origin: 'Mumbai',
-    destination: 'Pune',
-    origin_time: '01 May 2024 09:00 AM',
-    destination_time: '01 May 2024 11:30 PM',
+  const token = useRecoilValue(jwt);
+  const feedBusPath = coord => {
+    axios
+      .post(
+        'http://192.168.0.103:5000/api/driver/bus/feed-bus-route',
+        {
+          path: [coord],
+          bus_number: 'MH-75-6456',
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        },
+      )
+      .catch(err => {
+        console.log('------------>', err);
+      });
   };
 
   const startJourney = () => {
     setIsJourneyStarted(true);
+    fetchAndFeedCurrentLocation(feedBusPath);
   };
 
   const endJourney = () => {
     setIsJourneyStarted(false);
+    clearInterval(locationTracking);
   };
+
+  const getBusData = async () => {
+    axios
+      .get('http://192.168.0.103:5000/api/driver/driver-schedule', {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then(res => {
+        setBusDetails(res.data?.current_schedule);
+      })
+      .catch(err => {
+        console.log('------------>', err);
+      });
+  };
+
+  useEffect(() => {
+    getBusData();
+  }, []);
 
   if (!busDetails.bus_number) {
     return (
@@ -46,12 +94,15 @@ const HeroSection = () => {
         <Text style={styles.detail}>
           <FontAwesomeIcon icon={faLocationDot} style={styles.icon} />
           &nbsp;&nbsp;{busDetails.origin}
-          <Text style={styles.time}> - {busDetails.origin_time}</Text>
+          <Text style={styles.time}>
+            {' '}
+            - {formatDate(busDetails.start_time)}
+          </Text>
         </Text>
         <Text style={styles.detail}>
           <FontAwesomeIcon icon={faLocationArrow} style={styles.icon} />
           &nbsp;&nbsp;{busDetails.destination}
-          <Text style={styles.time}> - {busDetails.destination_time}</Text>
+          <Text style={styles.time}> - {formatDate(busDetails.end_time)}</Text>
         </Text>
       </View>
 
@@ -62,8 +113,10 @@ const HeroSection = () => {
             isJourneyStarted ? styles.disabledButton : styles.activeButton,
           ]}
           onPress={startJourney}>
+          {isJourneyStarted && <ActivityIndicator color="#fff" />}
           <Text style={styles.startText}>
-            {isJourneyStarted ? 'Journey Started...' : 'Start Journey'}
+            &nbsp;
+            {isJourneyStarted ? 'Tracking...' : 'Start Journey'}
           </Text>
         </TouchableOpacity>
 
@@ -131,6 +184,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
   },
   activeButton: {
     backgroundColor: '#4a90e2',

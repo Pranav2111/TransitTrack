@@ -21,7 +21,7 @@ const BusDetails = ({busDetails}) => {
           style={styles.icon}
         />
         <Text style={styles.detailLabel}>Bus Number:</Text>
-        <Text style={styles.detailValue}>{busDetails.busNumber}</Text>
+        <Text style={styles.detailValue}>{busDetails.bus_number}</Text>
       </View>
       <View style={styles.detailItem}>
         <FontAwesomeIcon
@@ -31,7 +31,7 @@ const BusDetails = ({busDetails}) => {
           style={styles.icon}
         />
         <Text style={styles.detailLabel}>Driver Name:</Text>
-        <Text style={styles.detailValue}>{busDetails.driverName}</Text>
+        <Text style={styles.detailValue}>{busDetails.driver_name}</Text>
       </View>
       <View style={styles.detailItem}>
         <FontAwesomeIcon
@@ -61,7 +61,7 @@ const BusDetails = ({busDetails}) => {
           style={styles.icon}
         />
         <Text style={styles.detailLabel}>Available Seats:</Text>
-        <Text style={styles.detailValue}>{busDetails.availableSeats}</Text>
+        <Text style={styles.detailValue}>{busDetails.available_seats}</Text>
       </View>
     </View>
   );

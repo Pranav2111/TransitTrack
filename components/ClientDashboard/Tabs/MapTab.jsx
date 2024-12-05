@@ -5,7 +5,6 @@ import Map from './MapTab/Map';
 import BusDetails from './MapTab/BusDetails';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {busData} from '../../../atom/busDataAtom';
-import {currentLocation} from '../../../atom/location';
 import axios from 'axios';
 import {jwt} from '../../../atom/authAtom';
 
@@ -14,7 +13,6 @@ const MapTab = () => {
   const [busDetails, setBusDetails] = useRecoilState(busData);
 
   const token = useRecoilValue(jwt);
-  const userLocation = useRecoilValue(currentLocation);
 
   const {path} = busDetails || {};
 
@@ -56,11 +54,14 @@ const MapTab = () => {
 
   return (
     <View style={styles.page}>
-      {busDetails?.details?.busNumber && (
+      {busDetails?.details?.bus_number && (
         <BusDetails busDetails={busDetails?.details} />
       )}
 
-      <Map currentLocation={userLocation} path={path} />
+      <Map
+        path={path}
+        busLocation={path.length > 0 ? path[path.length - 1] : null}
+      />
     </View>
   );
 };

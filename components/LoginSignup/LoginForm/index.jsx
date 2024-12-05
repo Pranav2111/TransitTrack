@@ -44,9 +44,10 @@ const LoginForm = () => {
         password: password,
       })
       .then(response => {
-        const {token, redirect_screen} = response?.data?.user || {};
+        const {user: userDetail, token} = response?.data || {};
+        const {redirect_screen} = userDetail || {};
         setToken(token);
-        setUser(response.data?.user);
+        setUser(userDetail);
         setTimeout(() => {
           setIsLoading(false);
           navigation.navigate(redirect_screen);

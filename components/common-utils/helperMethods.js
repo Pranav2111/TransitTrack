@@ -4,7 +4,7 @@ export const recenterToPath = (cameraRef, path) => {
 
     cameraRef.current.setCamera({
       centerCoordinate: [lastLocation[0], lastLocation[1]],
-      zoomLevel: 7,
+      zoomLevel: 15,
       animationDuration: 2000,
     });
   }

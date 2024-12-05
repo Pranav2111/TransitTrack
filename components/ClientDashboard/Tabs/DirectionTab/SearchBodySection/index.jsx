@@ -41,7 +41,7 @@ const SearchBodySection = () => {
 
   const handleGetBusPath = bus_number =>
     axios.get(
-      `http://192.168.0.103:5000/api/bus/bus-path?bus_number=${bus_number}`,
+      `http://192.168.0.103:5000/api/client/bus/bus-path?bus_number=${bus_number}`,
       {
         headers: {
           Authorization: token,
@@ -50,7 +50,7 @@ const SearchBodySection = () => {
     );
 
   const handleBusSelect = async bus => {
-    const response = await handleGetBusPath(bus.busNumber);
+    const response = await handleGetBusPath(bus.bus_number);
     const busPath = response.data.path;
 
     if (!busPath.length) {
@@ -111,7 +111,7 @@ const SearchBodySection = () => {
           style={styles.cardContainer}
           onPress={() => handleBusSelect(bus)}>
           <View style={styles.leftSection}>
-            <Text style={styles.busName}>{bus.busNumber}</Text>
+            <Text style={styles.busName}>{bus.bus_number}</Text>
             <Text style={styles.busTiming}>
               {getFormattedTimeRange(bus.start_time, bus.end_time)}
             </Text>
@@ -124,8 +124,8 @@ const SearchBodySection = () => {
               ]}>
               {bus.ac_type}
             </Text>
-            <Text style={[styles.seats, !bus.availableSeats && styles.noSeat]}>
-              {bus.availableSeats || 0} Seats Available
+            <Text style={[styles.seats, !bus.available_seats && styles.noSeat]}>
+              {bus.available_seats || 0} Seats Available
             </Text>
           </View>
         </TouchableOpacity>

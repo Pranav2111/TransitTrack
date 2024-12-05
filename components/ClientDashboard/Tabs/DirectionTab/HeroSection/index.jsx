@@ -37,7 +37,7 @@ const HeroSection = () => {
   const handleSubmit = () => {
     axios
       .get(
-        `http://192.168.0.103:5000/api/bus/scheduled-buses?originId=${formValues.origin.value}&destinationId=${formValues.destination.value}`,
+        `http://192.168.0.103:5000/api/client/bus/scheduled-buses?originId=${formValues.origin.value}&destinationId=${formValues.destination.value}`,
         {
           headers: {
             Authorization: token,
@@ -50,6 +50,9 @@ const HeroSection = () => {
           destination: formValues.destination.label,
           routes: res.data.schedules,
         });
+      })
+      .catch(err => {
+        console.log(err);
       });
   };
 
