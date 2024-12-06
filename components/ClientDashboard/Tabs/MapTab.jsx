@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import Map from './MapTab/Map';
 import BusDetails from './MapTab/BusDetails';
@@ -10,15 +10,16 @@ import {jwt} from '../../../atom/authAtom';
 
 let refreshInterval;
 const MapTab = () => {
-  const [busDetails, setBusDetails] = useRecoilState(busData);
+  const [path, setPath] = useState([]);
+  const [busDetails, _] = useRecoilState(busData);
 
   const token = useRecoilValue(jwt);
 
-  const {path} = busDetails || {};
+  const {path: busRoute} = busDetails || {};
 
   const handleGetBusPath = bus_number =>
     axios.get(
-      `http://192.168.0.103:5000/api/bus/bus-path?bus_number=${bus_number}`,
+      `http://192.168.0.100:5000/api/bus/bus-path?bus_number=${bus_number}`,
       {
         headers: {
           Authorization: token,
@@ -30,22 +31,20 @@ const MapTab = () => {
     const response = await handleGetBusPath(busDetails.details.busNumber);
     const busPath = response.data.path;
 
+    console.log('==================>', busPath);
     if (!busPath.length) {
       return;
     }
 
-    const updateBusDetails = {
-      ...busDetails,
-      path: busPath,
-    };
-
-    setBusDetails(updateBusDetails);
+    setPath(busPath);
   };
 
   useEffect(() => {
     refreshInterval = setInterval(() => {
       refreshBusPath();
-    }, 1000 * 15);
+    }, 1000 * 5);
+
+    setPath(busRoute);
 
     return () => {
       clearInterval(refreshInterval);
@@ -58,10 +57,7 @@ const MapTab = () => {
         <BusDetails busDetails={busDetails?.details} />
       )}
 
-      <Map
-        path={path}
-        busLocation={path.length > 0 ? path[path.length - 1] : null}
-      />
+      <Map path={path} />
     </View>
   );
 };

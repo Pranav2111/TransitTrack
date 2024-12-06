@@ -52,7 +52,7 @@ const SignUpForm = () => {
     setIsLoading(true);
 
     axios
-      .post('http://192.168.0.103:5000/api/auth/signup', {
+      .post('http://192.168.0.100:5000/api/auth/signup', {
         name,
         email,
         password,

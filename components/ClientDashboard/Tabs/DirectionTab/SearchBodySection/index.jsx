@@ -12,6 +12,7 @@ import {busData, routeSearch} from '../../../../../atom/busDataAtom';
 import {tabNavigator} from '../../../../../atom/tabNavigator';
 import axios from 'axios';
 import {jwt} from '../../../../../atom/authAtom';
+import {useToast} from '../../../../common-utils/ToastUtil';
 
 const formatTime = date => {
   return new Date(date).toLocaleTimeString('en-US', {
@@ -30,6 +31,7 @@ const getFormattedTimeRange = (start_date, end_date) => {
 };
 
 const SearchBodySection = () => {
+  const {ToastComponent, triggerToast} = useToast();
   const [busDetails, setBusDetails] = useRecoilState(busData);
   const [_, setActiveNavItem] = useRecoilState(tabNavigator);
 
@@ -37,11 +39,11 @@ const SearchBodySection = () => {
   const {origin, destination, routes} = useRecoilValue(routeSearch) || {};
 
   const isDataSearched = !!origin && !!destination;
-  const routesAvailable = !!routes.length;
+  const routesAvailable = !!routes?.length;
 
   const handleGetBusPath = bus_number =>
     axios.get(
-      `http://192.168.0.103:5000/api/client/bus/bus-path?bus_number=${bus_number}`,
+      `http://192.168.0.100:5000/api/client/bus/bus-path?bus_number=${bus_number}`,
       {
         headers: {
           Authorization: token,
@@ -53,7 +55,8 @@ const SearchBodySection = () => {
     const response = await handleGetBusPath(bus.bus_number);
     const busPath = response.data.path;
 
-    if (!busPath.length) {
+    if (!busPath?.length) {
+      triggerToast('The journey is not started yet!', 'warning');
       return;
     }
 
@@ -130,6 +133,7 @@ const SearchBodySection = () => {
           </View>
         </TouchableOpacity>
       ))}
+      {ToastComponent}
     </ScrollView>
   );
 };

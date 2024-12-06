@@ -68,7 +68,9 @@ const TitleBar = () => {
               source={{uri: 'https://avatar.iran.liara.run/public/boy'}}
               style={styles.profileImage}
             />
-            <Text style={styles.nameText}>{toTitleCase(userDetails.name)}</Text>
+            <Text style={styles.nameText}>
+              {toTitleCase(userDetails?.name || '')}
+            </Text>
             <TouchableOpacity
               style={styles.logoutButton}
               onPress={handleLogOut}>

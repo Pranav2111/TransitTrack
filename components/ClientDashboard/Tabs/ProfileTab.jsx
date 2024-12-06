@@ -12,10 +12,12 @@ import {faEnvelope} from '@fortawesome/free-solid-svg-icons';
 import {useRecoilState} from 'recoil';
 import {jwt, user} from '../../../atom/authAtom';
 import {useNavigation} from '@react-navigation/native';
+import {routeSearch} from '../../../atom/busDataAtom';
 
 const ProfileTab = () => {
   const [_t, setToken] = useRecoilState(jwt);
   const [userDetails, setUserDetails] = useRecoilState(user);
+  const [_, setRoute] = useRecoilState(routeSearch);
 
   const navigation = useNavigation();
 
@@ -23,6 +25,7 @@ const ProfileTab = () => {
     navigation.navigate('login-signup');
     setToken(null);
     setUserDetails({});
+    setRoute({});
   };
 
   return (

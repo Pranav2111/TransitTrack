@@ -1,15 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useEffect, useRef, useState} from 'react';
-import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, {useEffect, useRef} from 'react';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import Mapbox from '@rnmapbox/maps';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faCrosshairs} from '@fortawesome/free-solid-svg-icons';
+import {faBus, faCrosshairs} from '@fortawesome/free-solid-svg-icons';
 import {useRecoilValue} from 'recoil';
 import {currentLocation} from '../../../../atom/location';
 import {
@@ -21,33 +15,34 @@ Mapbox.setAccessToken(
   'sk.eyJ1IjoicGF0aWxwcmFuYXYyMSIsImEiOiJjbTNqM3FsbGgwOGhlMmpyMjE5Y2lkcG85In0.3iLLMA0SaUvjZIH9hMb0JQ',
 );
 
-const mapHeight = Dimensions.get('window').height;
-
-const Map = ({busLocation, path}) => {
+const Map = ({path}) => {
+  const busCoord = path?.length > 0 ? path[path.length - 1] : null;
   const userLocation = useRecoilValue(currentLocation);
-
   const cameraRef = useRef(null);
 
   const recenter = () => {
-    if (path.length) {
+    if (path?.length) {
       recenterToPath(cameraRef, path);
     } else {
       recenterToUserLocation(cameraRef, userLocation);
     }
   };
 
-  const geoJSON = {
-    type: 'FeatureCollection',
-    features: [
-      {
-        type: 'Feature',
-        geometry: {
-          type: 'LineString',
-          coordinates: path,
+  const geoJSON = React.useMemo(
+    () => ({
+      type: 'FeatureCollection',
+      features: [
+        {
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: path,
+          },
         },
-      },
-    ],
-  };
+      ],
+    }),
+    [path],
+  );
 
   useEffect(() => {
     if (cameraRef.current) {
@@ -55,12 +50,10 @@ const Map = ({busLocation, path}) => {
     }
   }, [path, userLocation]);
 
-  console.log(busLocation);
-
   return (
     <View>
       <Mapbox.MapView
-        style={[styles.map, {height: mapHeight - 430}]}
+        style={[styles.map]}
         zoomEnabled
         pitchEnabled
         scrollEnabled
@@ -71,12 +64,20 @@ const Map = ({busLocation, path}) => {
           <View style={styles.marker} />
         </Mapbox.PointAnnotation>
 
-        {busLocation && (
-          <Mapbox.PointAnnotation id="bus-location" coordinate={busLocation}>
-            <Image
-              source={require('../../../../assets/bus.png')}
+        {path?.length && (
+          <Mapbox.PointAnnotation id="origin-location" coordinate={path[0]} />
+        )}
+
+        {busCoord && (
+          <Mapbox.PointAnnotation
+            id="bus-location"
+            anchor={{y: 0.95, x: 0.5}}
+            coordinate={busCoord}>
+            <FontAwesomeIcon
               style={styles.bus}
-              resizeMode="contain"
+              icon={faBus}
+              size={30}
+              color="#ff6721"
             />
           </Mapbox.PointAnnotation>
         )}
@@ -103,6 +104,7 @@ const Map = ({busLocation, path}) => {
 const styles = StyleSheet.create({
   map: {
     width: '100%',
+    height: 800,
   },
   marker: {
     backgroundColor: '#007aff',
@@ -128,8 +130,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   bus: {
-    height: 40,
-    width: 25,
+    backgroundColor: '#2c2c2c',
+    borderRadius: 10,
   },
 });
 

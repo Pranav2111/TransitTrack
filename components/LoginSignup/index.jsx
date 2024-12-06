@@ -37,11 +37,8 @@ const LoginSignup = () => {
     <View style={styles.container}>
       <View style={styles.bgImageContainer}>
         <ImageBackground
-          source={{
-            uri: 'https://citybuskw.com/wp-content/themes/citybus/images/about-us.jpg',
-          }}
+          source={require('../../assets/login_bg.jpg')}
           style={styles.background}
-          resizeMode="contain"
         />
       </View>
       <View style={styles.parentBox}>
@@ -85,24 +82,28 @@ const LoginSignup = () => {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
+    width: '100%',
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    filter: 'blur(1)',
+    marginBottom: 50,
   },
   container: {
     flex: 1,
-    backgroundColor: '#eeeeee',
+    backgroundColor: '#d4d4d4',
     alignItems: 'center',
     position: 'relative',
     overflow: 'hidden',
   },
   bgImageContainer: {
     backgroundColor: 'grey',
-    width: 700,
-    height: 700,
-    marginTop: -200,
+    width: 500,
+    height: 500,
     borderRadius: '50%',
-    padding: 100,
-    // filter: 'blur(1)',
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    overflow: 'hidden',
   },
   parentBox: {
     position: 'absolute',
@@ -118,7 +119,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     paddingHorizontal: 30,
     paddingVertical: 20,
-    top: '30%',
+    top: '35%',
   },
   switch: {
     width: 200,

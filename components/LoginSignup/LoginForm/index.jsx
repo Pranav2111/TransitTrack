@@ -39,7 +39,7 @@ const LoginForm = () => {
     setIsLoading(true);
 
     axios
-      .post('http://192.168.0.103:5000/api/auth/login', {
+      .post('http://192.168.0.100:5000/api/auth/login', {
         email: email,
         password: password,
       })

@@ -11,9 +11,12 @@ import {jwt, user} from '../../../../../atom/authAtom';
 import axios from 'axios';
 import {busStops} from '../../../../../atom/formRequisite';
 import {toTitleCase} from '../../../../common-utils/commonMethods';
+import {useToast} from '../../../../common-utils/ToastUtil';
 
 const HeroSection = () => {
-  const userData = useRecoilValue(user);
+  const {triggerToast, ToastComponent} = useToast();
+
+  const userData = useRecoilValue(user) || {};
   const token = useRecoilValue(jwt);
 
   const [_, setRoute] = useRecoilState(routeSearch);
@@ -37,7 +40,7 @@ const HeroSection = () => {
   const handleSubmit = () => {
     axios
       .get(
-        `http://192.168.0.103:5000/api/client/bus/scheduled-buses?originId=${formValues.origin.value}&destinationId=${formValues.destination.value}`,
+        `http://192.168.0.100:5000/api/client/bus/scheduled-buses?originId=${formValues.origin.value}&destinationId=${formValues.destination.value}`,
         {
           headers: {
             Authorization: token,
@@ -45,6 +48,9 @@ const HeroSection = () => {
         },
       )
       .then(res => {
+        if (!res.data.schedules?.length) {
+          triggerToast('No buses for this route!', 'warning');
+        }
         setRoute({
           origin: formValues.origin.label,
           destination: formValues.destination.label,
@@ -61,7 +67,7 @@ const HeroSection = () => {
       return;
     }
     axios
-      .get('http://192.168.0.103:5000/api/form-requisite/bus-stops', {
+      .get('http://192.168.0.100:5000/api/form-requisite/bus-stops', {
         headers: {
           Authorization: token,
         },
@@ -75,7 +81,7 @@ const HeroSection = () => {
     <View style={styles.heroSection}>
       <View style={styles.greetSection}>
         <Text style={styles.greetText}>{greetText}</Text>
-        <Text style={styles.name}>{toTitleCase(userData?.name) || 'User'}</Text>
+        <Text style={styles.name}>{toTitleCase(userData?.name || 'User')}</Text>
 
         <Text style={styles.titleQuestion}>Where do you</Text>
         <Text style={styles.titleQuestion}>want to go?</Text>
@@ -111,6 +117,7 @@ const HeroSection = () => {
           {false ? 'Searching...' : 'Search Buses'}
         </Text>
       </TouchableOpacity>
+      {ToastComponent}
     </View>
   );
 };

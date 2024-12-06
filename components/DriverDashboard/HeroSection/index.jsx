@@ -29,7 +29,7 @@ const HeroSection = () => {
   const feedBusPath = coord => {
     axios
       .post(
-        'http://192.168.0.103:5000/api/driver/bus/feed-bus-route',
+        'http://192.168.0.100:5000/api/driver/bus/feed-bus-route',
         {
           path: [coord],
           bus_number: 'MH-75-6456',
@@ -57,7 +57,7 @@ const HeroSection = () => {
 
   const getBusData = async () => {
     axios
-      .get('http://192.168.0.103:5000/api/driver/driver-schedule', {
+      .get('http://192.168.0.100:5000/api/driver/driver-schedule', {
         headers: {
           Authorization: token,
         },
