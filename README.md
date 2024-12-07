@@ -1,79 +1,41 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# TransitTrack
 
-# Getting Started
+TransitTrack is a Bus Journey Management System with two distinct user interfaces: **Driver Interface** and **Client Interface**. The system allows drivers to manage their bus journeys, including live tracking, status updates, and journey completion. Meanwhile, clients can track bus statuses, select bus journeys, and adjust their travel preferences.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## Features
 
-## Step 1: Start the Metro Server
+### Driver Interface
+The Driver Interface enables drivers to:
+1. **Login** to the application.
+2. **View Assigned Bus**: After logging in, the driver can see the bus assigned to them for the journey.
+3. **Start the Journey**: The driver can start the journey, which will begin live tracking via geolocation.
+4. **Pause the Journey**: The driver can pause the journey at any point.
+5. **Mark Journey as Completed**: When the journey is completed, the driver can mark it as finished.
+6. **Live Tracking**: As the journey is in progress, the driver's location is continuously tracked and recorded in the database.
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+https://github.com/user-attachments/assets/763e5dfa-7759-44c1-989c-f02f2d82ba2b
 
-To start Metro, run the following command from the _root_ of your React Native project:
 
-```bash
-# using npm
-npm start
+### Client Interface
+The Client Interface allows clients to:
+1. **Login/Signup** to the application.
+2. **Select Origin and Destination**: Clients can choose their starting point and destination for the journey.
+3. **Select Bus**: Clients can pick the bus they want to travel on from a list of available buses.
+4. **View Live Bus Status**: Clients can track the live status of the bus, including real-time location updates.
+5. **Adjust Journey**: Clients can modify their journey based on the live status of the bus, making travel more flexible.
 
-# OR using Yarn
-yarn start
-```
+https://github.com/user-attachments/assets/10219fc8-a035-4182-99b4-d9d0258fb508
 
-## Step 2: Start your Application
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
 
-### For Android
 
-```bash
-# using npm
-npm run android
+### (Upcoming) Seat Selection and Booking
+This feature allows clients to:
+1. **Select Seats for Future Journeys**: Clients can choose their preferred seat on a bus for upcoming trips.
+2. **Book Seats**: Once seats are selected, clients can book them for a specific date and time.
+3. **Real-time Seat Availability**: The system will display real-time seat availability to ensure no double bookings are made.
+4. **Seat Booking Confirmation**: After booking a seat, the client will receive a confirmation of their booking.
+5. **Adjust Booking**: Clients can modify or cancel their seat booking up to a certain time before the journey starts.
+6. **Ticket Generation**: Once the booking is complete, a ticket with journey details is generated for the client.
 
-# OR using Yarn
-yarn android
-```
 
-### For iOS
-
-```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
-
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
-## Step 3: Modifying your App
-
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
